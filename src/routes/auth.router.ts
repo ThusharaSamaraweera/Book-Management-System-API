@@ -5,5 +5,6 @@ import { authRequestValidator } from "../utils/requestValidator/authRequestValid
 const router: Router = Router();
 
 router.post("/signup", authRequestValidator.validateSignup, authController.signup);
+router.post("/login", authRequestValidator.validateLogin, authController.login);
 
 export default router;

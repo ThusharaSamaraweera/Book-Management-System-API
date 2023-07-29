@@ -29,16 +29,19 @@ const signup = async (logger: Logger, user: IUser) => {
  */
 const login = async (logger: Logger, user: LoginUser) => {
   try {
-    const existingUser = await userService.getUserByEmail(user.email);
+    logger.info({ message: `Called login service with ${user.email}` });
+    const existingUser = await userService.getUserByEmail(logger, user.email);
 
     // Check if user exists
     if (!existingUser) {
+      logger.error({ message: `User with email ${user.email} not found` });
       throw new BadRequestError("", "Invalid credentials");
     }
 
     // Check if password is correct
     const isMatch = await bcrypt.compare(user.password, existingUser.password);
     if (!isMatch) {
+      logger.error({ message: `Invalid password for user with email ${user.email}` });
       throw new BadRequestError("", "Invalid credentials");
     }
 
@@ -59,11 +62,16 @@ const login = async (logger: Logger, user: LoginUser) => {
   }
 };
 
+/**
+ * 
+ * @param {JwtPayload} payload 
+ * @returns {string} token
+ */
 const getJwtToken = (payload: JwtPayload) => {
   return Jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: 360000 });
 };
 
 export const authService = {
   signup,
-  login
+  login,
 };
