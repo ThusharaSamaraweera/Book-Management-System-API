@@ -1,4 +1,4 @@
-import { IUser } from "modules";
+import { IUser } from "../modules";
 
 const signup = async (user: IUser) => {
    return 'signup';
