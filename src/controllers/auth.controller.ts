@@ -9,7 +9,7 @@ const signup = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user: IUser = req.body;
     logger.info({message: `Called signup controller with ${user.email}`});
-    await authService.signup(user);
+    await authService.signup(logger, user);
     return res.status(200).json({ message: "User created successfully" });
   } catch (error) {
     logger.error({message: `Error in signup controller ${error}`});
