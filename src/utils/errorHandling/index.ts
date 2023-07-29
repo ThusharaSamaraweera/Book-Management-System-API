@@ -13,4 +13,3 @@ class ErrorHandler {
 
 export const errorHandler = new ErrorHandler();
 
-module.exports = { errorHandler };
