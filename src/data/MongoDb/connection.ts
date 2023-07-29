@@ -1,9 +1,13 @@
 import mongoose from "mongoose";
+import { Logger } from "../../utils/logger";
+import { MONGODB_SERVICE } from "../../constants/Logger";
+import { DBError } from "../../utils/errorHandling/ErrorResponse";
 
 export class MongoDbConfig {
   private readonly mongoUrl =
     `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@${process.env.DB_HOST_NAME}` +
     `/${process.env.MONGO_DB_NAME}?retryWrites=true&w=majority`;
+  private readonly logger = new Logger(MONGODB_SERVICE);
 
   /**
    * This function will initiate the Mongo Database connection
@@ -13,10 +17,10 @@ export class MongoDbConfig {
     mongoose
       .connect(this.mongoUrl)
       .then(() => {
-        console.log("Connected to MongoDb");
+        this.logger.info({ message: "Mongo DB connection established successfully" });
       })
       .catch((err: Error) => {
-        throw `There is error in connecting Mongo DB ${err.message}`;
+        throw new DBError("", err.message);
       });
   }
 }
