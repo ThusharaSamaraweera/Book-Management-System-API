@@ -63,9 +63,22 @@ const getBookById = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
+const updateBook = async (req: Request, res: Response, next: NextFunction) => {
+  const logger = new Logger(BOOK_SERVICE);
+  try {
+    if (!req.params.bookId || req.params.bookId === ":bookId") throw new BadRequestError("Book id is required", "");
+    const bookId: Schema.Types.ObjectId = req.params?.bookId as unknown as Schema.Types.ObjectId;
+    const book: NewBook = req.body;
+    logger.info({ message: `Called updateBook controller with ${bookId}` });
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const bookController = {
   create,
   getAllByUserId,
   filterBooks,
   getBookById,
+  updateBook,
 };

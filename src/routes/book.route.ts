@@ -8,5 +8,6 @@ bookRoute.post("/", bookRequestValidator.validateCreateBook, bookController.crea
 bookRoute.get("/users/:userId", bookController.getAllByUserId);
 bookRoute.get("/", bookController.filterBooks);
 bookRoute.get("/:bookId", bookController.getBookById);
+bookRoute.patch("/:bookId", bookController.updateBook);
 
 export default bookRoute;
