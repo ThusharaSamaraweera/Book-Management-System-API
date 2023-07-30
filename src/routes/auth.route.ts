@@ -2,9 +2,9 @@ import { Router } from "express";
 import { authController } from "../controllers/auth.controller";
 import { authRequestValidator } from "../utils/requestValidator/authRequestValidator";
 
-const router: Router = Router();
+const authRouter: Router = Router();
 
-router.post("/signup", authRequestValidator.validateSignup, authController.signup);
-router.post("/login", authRequestValidator.validateLogin, authController.login);
+authRouter.post("/signup", authRequestValidator.validateSignup, authController.signup);
+authRouter.post("/login", authRequestValidator.validateLogin, authController.login);
 
-export default router;
+export default authRouter;

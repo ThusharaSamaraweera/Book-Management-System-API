@@ -13,13 +13,7 @@ import { Logger } from "../utils/logger";
 const create = async (logger: Logger, book: NewBook, userId: Schema.Types.ObjectId) => {
   logger.info({ message: `Called book creation service with title ${book.title} , user ${userId}` });
   try {
-    // Check if user exists
-    const user = await userService.getUserById(logger, userId);
-    if (!user) {
-      logger.error({ message: `User not found with id ${userId}` });
-      throw new BadRequestError("", "User not found");
-    }
-    
+
     // Create book
     const bookModel = new BookModelSchema(book);
     bookModel.createdBy = userId;
