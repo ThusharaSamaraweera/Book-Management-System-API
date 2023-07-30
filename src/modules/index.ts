@@ -1,3 +1,5 @@
+import { Schema } from "mongoose";
+
 export interface IUser {
     name: string;
     email: string;
@@ -12,3 +14,13 @@ export interface jwtPayload {
   iat?: number;
   exp?: number;
 }
+
+export interface IBook {
+  title: string;
+  author: string;
+  publicationYear: string;
+  genre: string;
+  createdBy: Schema.Types.ObjectId;
+}
+
+export type NewBook = Omit<IBook, "createdBy">;

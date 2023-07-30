@@ -1,6 +1,7 @@
 import mongoose, { Schema } from "mongoose";
+import { IUser } from "../../../modules";
 
-const UserSchema = new Schema(
+const UserSchema: Schema<IUser> = new Schema(
   {
     name: {
       type: String,
