@@ -16,6 +16,8 @@ const validateCreateBook = async (req: Request, res: Response, next: NextFunctio
   const logger = new Logger(BOOK_SERVICE);
 
   try {
+    if (!req.params.userId || req.params.userId === ":userId") throw new BadRequestError("User id is required", "");
+
     // Validate request body
     const schema = Joi.object({
       title: Joi.string().min(3).max(50).required(),
@@ -34,7 +36,33 @@ const validateCreateBook = async (req: Request, res: Response, next: NextFunctio
   }
 };
 
+const validateUpdateBook = async (req: Request, res: Response, next: NextFunction) => {
+  const data: NewBook = req.body;
+  const logger = new Logger(BOOK_SERVICE);
+  try {
+    if(!req.params.bookId || req.params.bookId === ":bookId") throw new BadRequestError("Book id is required", "" )
+    const bookId: Schema.Types.ObjectId = req.params.bookId as unknown as Schema.Types.ObjectId;
+
+    // Validate request body
+    const schema = Joi.object({
+      title: Joi.string().min(3).max(50).optional(),
+      author: Joi.string().min(3).max(50).optional(),
+      publicationYear: Joi.string().length(4).optional(),
+      genre: Joi.string().min(3).max(50).optional(),
+    });
+    req.body = validate(schema, data);
+    logger.info({ message: `Validated validateUpdateBook with ${bookId}` })
+    next();
+  } catch (error) {
+    if (error instanceof BadRequestError) {
+      next(new BadRequestError(undefined, error.description));
+    }
+    next(error);
+  }
+};
+
 export const bookRequestValidator = {
     validateCreateBook,
+    validateUpdateBook
 };
 
