@@ -27,6 +27,19 @@ const create = async (logger: Logger, book: NewBook, userId: Schema.Types.Object
   }
 };
 
+const getAllByUserId = async (logger: Logger, userId: Schema.Types.ObjectId) => {
+    logger.info({ message: `Called book creation service with user ${userId}` });
+    try {
+        const books = await BookModelSchema.find({ createdBy: userId });
+        logger.info({ message: `Getting books for user - ${userId}` });
+        return books;
+    } catch (error) {
+        throw new ServerError("Books fetching failed", error.message);
+    }
+} 
+
+
 export const bookService = {
   create,
+    getAllByUserId
 };
