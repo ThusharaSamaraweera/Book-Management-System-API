@@ -51,23 +51,47 @@ const getAllByUserId = async (logger: Logger, userId: Schema.Types.ObjectId) => 
  * @param genre
  * @returns {IBook[]} books
  */
-const filterBooks = async (logger: Logger, title: string, author: string, genre: string) => {
+const filterBooks = async (
+  logger: Logger,
+  title: string,
+  author: string,
+  genre: string,
+  page: string,
+  limit: string
+) => {
   logger.info({ message: `Called filterBook service` });
 
+  // Set page limit and skip
+  const pageLimit: number = parseInt(limit) || 10;
+  let skip: number = (parseInt(page) - 1) * pageLimit;
+
+  // Create query object
   let queryObj: BookFilterQuery = {};
-  if (title) queryObj.title = title;
-  if (author) queryObj.author = author;
+  if (title) queryObj.title = new RegExp(title, "i");
+  if (author) queryObj.author = new RegExp(author, "i");
   if (genre) queryObj.genre = genre;
 
   try {
-    const books = await BookModelSchema.find({
-      title: { $regex: queryObj.title, $options: "i" },
-      author: { $regex: queryObj.author, $options: "i" },
-      genre: { $regex: queryObj.genre, $options: "i" },
-    });
-    logger.info({ message: `Fetched all books` });
-    return books;
-  } catch (error) {}
+    // Create pipeline
+    const pipeline = [
+      { $match: queryObj },
+      {
+        $facet: {
+          data: [{ $skip: skip }, { $limit: pageLimit }],
+        },
+      },
+      {
+        $project: {
+          data: 1,
+          count: { $size: "$data" },
+          page: page
+        },
+      },
+    ];
+    return await BookModelSchema.aggregate(pipeline);
+  } catch (error) {
+    throw new ServerError("Books fetching failed", error.message);
+  }
 };
 
 /**
@@ -89,6 +113,13 @@ const getBookById = async (logger: Logger, bookId: Schema.Types.ObjectId) => {
   }
 };
 
+/**
+ * Update book by id
+ * @param logger 
+ * @param bookId 
+ * @param updatingBook 
+ * @returns {IBook} book
+ */
 const updateBook = async (logger: Logger, bookId: Schema.Types.ObjectId, updatingBook: NewBook) => {
   try {
     logger.info({ message: `Updating book with id ${bookId}` });
@@ -122,6 +153,12 @@ const updateBook = async (logger: Logger, bookId: Schema.Types.ObjectId, updatin
   }
 };
 
+/**
+ * Delete book by id
+ * @param logger
+ * @param bookId
+ * @returns {IBook} book
+ */
 const deleteBook = async (logger: Logger, bookId: Schema.Types.ObjectId) => {
   try {
     logger.info({ message: `Deleting book with id ${bookId}` });
