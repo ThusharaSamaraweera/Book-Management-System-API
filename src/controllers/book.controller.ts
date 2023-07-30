@@ -70,6 +70,8 @@ const updateBook = async (req: Request, res: Response, next: NextFunction) => {
     const bookId: Schema.Types.ObjectId = req.params?.bookId as unknown as Schema.Types.ObjectId;
     const book: NewBook = req.body;
     logger.info({ message: `Called updateBook controller with ${bookId}` });
+    const updatedBook = await bookService.updateBook(logger, bookId, book);
+    res.json(apiResponse._200({ updatedBook }));
   } catch (error) {
     next(error);
   }

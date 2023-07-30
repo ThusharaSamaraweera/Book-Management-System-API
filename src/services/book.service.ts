@@ -89,9 +89,44 @@ const getBookById = async (logger: Logger, bookId: Schema.Types.ObjectId) => {
   }
 };
 
+const updateBook = async (logger: Logger, bookId: Schema.Types.ObjectId, updatingBook: NewBook) => {
+  try {
+    logger.info({ message: `Updating book with id ${bookId}` });
+
+    // Check if book exists, if not throw error
+    const existingBook = await getBookById(logger, bookId);
+
+    // Update book
+    if (updatingBook.title) existingBook.title = updatingBook.title;
+    if (updatingBook.author) existingBook.author = updatingBook.author;
+    if (updatingBook.genre) existingBook.genre = updatingBook.genre;
+    if( updatingBook.publicationYear) existingBook.publicationYear = updatingBook.publicationYear;
+
+
+    // Save updated book
+    const updatedBook = await BookModelSchema.findOneAndUpdate(
+      {
+        _id: bookId,
+      },
+      {
+        $set: updatingBook,
+      },
+      {
+        new: true,
+      }
+    );
+
+    return updatedBook;
+  } catch (error) {
+    if (error instanceof NotFoundError) throw error;
+    throw new ServerError("Book updating failed", error.message);
+  }
+};
+
 export const bookService = {
   create,
   getAllByUserId,
   filterBooks,
   getBookById,
+  updateBook,
 };
