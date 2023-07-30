@@ -1,6 +1,6 @@
 import { Router } from "express";
 import authRouter from "./auth.route";
-import bookRouter from "./user.route";
+import bookRouter from "./book.route";
 import { routeProtector } from "../middleware/routeProtector";
 
 const routes = Router();

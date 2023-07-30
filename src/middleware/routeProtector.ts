@@ -7,7 +7,7 @@ import { UnauthorizedError } from "../utils/errorHandling/ErrorResponse";
 
 const validUser = async (req: Request, res: Response, next: NextFunction) => {
     const logger = new Logger(AUTH_SERVICE);
-
+    
     const userId: Schema.Types.ObjectId = req.params.userId as unknown as Schema.Types.ObjectId;
     const user = await userService.getUserById(logger, userId);
     logger.info({ message: `Validating user with id ${userId}` });

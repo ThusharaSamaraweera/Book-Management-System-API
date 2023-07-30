@@ -5,5 +5,6 @@ import { bookRequestValidator } from "../utils/requestValidator/bookRequestValid
 const BookRoute: Router = Router({ mergeParams: true});
 
 BookRoute.post("/", bookRequestValidator.validateCreateBook, bookController.create);
+BookRoute.get("/", bookController.getAllByUserId);
 
 export default BookRoute; 

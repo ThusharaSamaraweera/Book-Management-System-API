@@ -2,7 +2,6 @@ import { Schema } from "mongoose";
 import { BookModelSchema } from "../data/MongoDb";
 import { NewBook } from "../modules";
 import { BadRequestError, ServerError } from "../utils/errorHandling/ErrorResponse";
-import { userService } from "./user.service";
 import { Logger } from "../utils/logger";
 
 /**
