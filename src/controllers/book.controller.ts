@@ -37,11 +37,27 @@ const getAllByUserId = async (req: Request, res: Response, next: NextFunction) =
 
 const filterBooks = async (req: Request, res: Response, next: NextFunction) => {
   const logger = new Logger(BOOK_SERVICE);
-  const {title, author, gerne } = req.query;
-  logger.info({ message: `Called filterBooks controller with ${title}, ${author} and ${gerne}` });
+  const title = req.query["title"] as string;
+  const author = req.query["author"] as string;
+  const genre = req.query["genre"] as string;
+
+  logger.info({ message: `Called filterBooks controller with ${title}, ${author} and ${genre}` });
   try {
-    const books = await bookService.filterBooks(logger);
+    const books = await bookService.filterBooks(logger, title, author, genre);
     res.json(apiResponse._200({ books }));
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getBookById = async (req: Request, res: Response, next: NextFunction) => {
+  const logger = new Logger(BOOK_SERVICE);
+
+  try {
+    if (!req.params.bookId || req.params.bookId === ":bookId") throw new BadRequestError("Book id is required", "");
+    const bookId: Schema.Types.ObjectId = req.params?.bookId as unknown as Schema.Types.ObjectId;
+    const book = await bookService.getBookById(logger, bookId);
+    res.json(apiResponse._200({ book }));
   } catch (error) {
     next(error);
   }
@@ -51,4 +67,5 @@ export const bookController = {
   create,
   getAllByUserId,
   filterBooks,
+  getBookById,
 };

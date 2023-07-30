@@ -1,13 +1,14 @@
 import { Schema } from "mongoose";
 import { BookModelSchema } from "../data/MongoDb";
-import { NewBook } from "../modules";
-import { BadRequestError, ServerError } from "../utils/errorHandling/ErrorResponse";
+import { BookFilterQuery, IBook, NewBook } from "../modules";
+import { BadRequestError, NotFoundError, ServerError } from "../utils/errorHandling/ErrorResponse";
 import { Logger } from "../utils/logger";
 
 /**
- *
+ *  Create book
  * @param book
  * @param userId
+ * @returns {IBook} createdBook
  */
 const create = async (logger: Logger, book: NewBook, userId: Schema.Types.ObjectId) => {
   logger.info({ message: `Called book creation service with title ${book.title} , user ${userId}` });
@@ -25,6 +26,12 @@ const create = async (logger: Logger, book: NewBook, userId: Schema.Types.Object
   }
 };
 
+/**
+ * Get book by id
+ * @param logger
+ * @param userId
+ * @returns {IBook[]} books
+ */
 const getAllByUserId = async (logger: Logger, userId: Schema.Types.ObjectId) => {
   logger.info({ message: `Called getAllByUserId service with user ${userId}` });
   try {
@@ -36,15 +43,49 @@ const getAllByUserId = async (logger: Logger, userId: Schema.Types.ObjectId) => 
   }
 };
 
-const filterBooks = async (logger: Logger) => {
+/**
+ * Filter books by title, author and genre
+ * @param logger
+ * @param title
+ * @param author
+ * @param genre
+ * @returns {IBook[]} books
+ */
+const filterBooks = async (logger: Logger, title: string, author: string, genre: string) => {
   logger.info({ message: `Called filterBook service` });
 
+  let queryObj: BookFilterQuery = {};
+  if (title) queryObj.title = title;
+  if (author) queryObj.author = author;
+  if (genre) queryObj.genre = genre;
+
   try {
-    const books = await BookModelSchema.find();
-    logger.info({ message: `Fetched all books` });  
+    const books = await BookModelSchema.find({
+      title: { $regex: queryObj.title, $options: "i" },
+      author: { $regex: queryObj.author, $options: "i" },
+      genre: { $regex: queryObj.genre, $options: "i" },
+    });
+    logger.info({ message: `Fetched all books` });
     return books;
+  } catch (error) {}
+};
+
+/**
+ * Get book by id
+ * @param logger
+ * @param bookId
+ * @returns {IBook} book
+ */
+const getBookById = async (logger: Logger, bookId: Schema.Types.ObjectId) => {
+  try {
+    logger.info({ message: `Fetching book with id ${bookId}` });
+    const book = await BookModelSchema.findById(bookId);
+    if (!book) throw new NotFoundError("Book not found", "");
+
+    return book;
   } catch (error) {
-    
+    if (error instanceof NotFoundError) throw error;
+    throw new ServerError("Book fetching failed", error.message);
   }
 };
 
@@ -52,4 +93,5 @@ export const bookService = {
   create,
   getAllByUserId,
   filterBooks,
+  getBookById,
 };

@@ -24,3 +24,9 @@ export interface IBook {
 }
 
 export type NewBook = Omit<IBook, "createdBy">;
+
+export interface BookFilterQuery {
+  title?: string;
+  author?: string;
+  genre?: string;
+}
