@@ -12,7 +12,6 @@ import { Logger } from "../utils/logger";
 const create = async (logger: Logger, book: NewBook, userId: Schema.Types.ObjectId) => {
   logger.info({ message: `Called book creation service with title ${book.title} , user ${userId}` });
   try {
-
     // Create book
     const bookModel = new BookModelSchema(book);
     bookModel.createdBy = userId;
@@ -27,18 +26,30 @@ const create = async (logger: Logger, book: NewBook, userId: Schema.Types.Object
 };
 
 const getAllByUserId = async (logger: Logger, userId: Schema.Types.ObjectId) => {
-    logger.info({ message: `Called book creation service with user ${userId}` });
-    try {
-        const books = await BookModelSchema.find({ createdBy: userId });
-        logger.info({ message: `Getting books for user - ${userId}` });
-        return books;
-    } catch (error) {
-        throw new ServerError("Books fetching failed", error.message);
-    }
-} 
+  logger.info({ message: `Called getAllByUserId service with user ${userId}` });
+  try {
+    const books = await BookModelSchema.find({ createdBy: userId });
+    logger.info({ message: `Getting books for user - ${userId}` });
+    return books;
+  } catch (error) {
+    throw new ServerError("Books fetching failed", error.message);
+  }
+};
 
+const filterBooks = async (logger: Logger) => {
+  logger.info({ message: `Called filterBook service` });
+
+  try {
+    const books = await BookModelSchema.find();
+    logger.info({ message: `Fetched all books` });  
+    return books;
+  } catch (error) {
+    
+  }
+};
 
 export const bookService = {
   create,
-    getAllByUserId
+  getAllByUserId,
+  filterBooks,
 };

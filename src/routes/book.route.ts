@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { bookController } from "../controllers/book.controller";
 import { bookRequestValidator } from "../utils/requestValidator/bookRequestValidator";
+import { bookController } from "../controllers/book.controller";
 
-const BookRoute: Router = Router({ mergeParams: true});
+const bookRoute: Router = Router({ mergeParams: true });
 
-BookRoute.post("/", bookRequestValidator.validateCreateBook, bookController.create);
-BookRoute.get("/", bookController.getAllByUserId);
+bookRoute.post("/", bookRequestValidator.validateCreateBook, bookController.create);
+bookRoute.get("/users/:userId", bookController.getAllByUserId);
+bookRoute.get("/", bookController.filterBooks);
 
-export default BookRoute; 
+export default bookRoute;
