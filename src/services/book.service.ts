@@ -100,8 +100,7 @@ const updateBook = async (logger: Logger, bookId: Schema.Types.ObjectId, updatin
     if (updatingBook.title) existingBook.title = updatingBook.title;
     if (updatingBook.author) existingBook.author = updatingBook.author;
     if (updatingBook.genre) existingBook.genre = updatingBook.genre;
-    if( updatingBook.publicationYear) existingBook.publicationYear = updatingBook.publicationYear;
-
+    if (updatingBook.publicationYear) existingBook.publicationYear = updatingBook.publicationYear;
 
     // Save updated book
     const updatedBook = await BookModelSchema.findOneAndUpdate(
@@ -123,10 +122,26 @@ const updateBook = async (logger: Logger, bookId: Schema.Types.ObjectId, updatin
   }
 };
 
+const deleteBook = async (logger: Logger, bookId: Schema.Types.ObjectId) => {
+  try {
+    logger.info({ message: `Deleting book with id ${bookId}` });
+    const book = await BookModelSchema.findOneAndDelete({
+      _id: bookId,
+    });
+
+    if (!book) throw new NotFoundError("Book not found", "");
+    return book;
+  } catch (error) {
+    if (error instanceof NotFoundError) throw error;
+    throw new ServerError("Book deleting failed", error.message);
+  }
+};
+
 export const bookService = {
   create,
   getAllByUserId,
   filterBooks,
   getBookById,
   updateBook,
+  deleteBook,
 };

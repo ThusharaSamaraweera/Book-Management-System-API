@@ -81,12 +81,11 @@ const deleteBook = async (req: Request, res: Response, next: NextFunction) => {
   const logger = new Logger(BOOK_SERVICE);
   try {
     if(!req.params.bookId || req.params.bookId === ":bookId") throw new BadRequestError("Book id is required", "");
-    if(!req.params.userId || req.params.userId === ":userId") throw new BadRequestError("User id is required", "")
 
     const bookId: Schema.Types.ObjectId = req.params?.bookId as unknown as Schema.Types.ObjectId;
-    const userId: Schema.Types.ObjectId = req.params?.userId as unknown as Schema.Types.ObjectId;
-    logger.info({ message: `Called deleteBook controller with book id - ${bookId},user id - ${userId}` });
-
+    logger.info({ message: `Called deleteBook controller with book id - ${bookId}` });
+    const deletedBook = await bookService.deleteBook(logger, bookId);
+    res.json(apiResponse._200({ deletedBook }));
   } catch (error) {
     next(error);
   }
