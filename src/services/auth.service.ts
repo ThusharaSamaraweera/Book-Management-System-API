@@ -53,9 +53,14 @@ const login = async (logger: Logger, user: LoginUser) => {
     // Return jsonwebtoken
     const token = getJwtToken(payload);
 
-    //@ts-ignore
-    delete existingUser.password;
-    return { token, user: existingUser };
+    return {
+      token,
+      user: {
+        id: existingUser._id,
+        email: existingUser.email,
+        name: existingUser.name,
+      },
+    };
   } catch (error) {
     if (error instanceof BadRequestError) throw new BadRequestError(error.name, "");
     throw new ServerError("Login failed", error.message);
@@ -63,15 +68,22 @@ const login = async (logger: Logger, user: LoginUser) => {
 };
 
 /**
- * 
- * @param {JwtPayload} payload 
+ *
+ * @param {JwtPayload} payload
  * @returns {string} token
  */
 const getJwtToken = (payload: JwtPayload) => {
   return Jwt.sign(payload, process.env.JWT_SECRET!, { expiresIn: 360000 });
 };
 
+const getPayloadByToken = (logger: Logger, token: string) => {
+  const payload = Jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+
+  return payload;
+};
+
 export const authService = {
   signup,
   login,
+  getPayloadByToken,
 };

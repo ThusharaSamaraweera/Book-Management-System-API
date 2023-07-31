@@ -174,6 +174,19 @@ const deleteBook = async (logger: Logger, bookId: Schema.Types.ObjectId) => {
   }
 };
 
+const deleteBooksByUserId = async (logger: Logger, userId: Schema.Types.ObjectId) => {
+  try {
+    logger.info({ message: `Deleting books with user id ${userId}` });
+    const books = await BookModelSchema.deleteMany({
+      createdBy: userId,
+    });
+
+    return books;
+  } catch (error) {
+    throw new ServerError("Books deleting failed", error.message);
+  }
+}
+
 export const bookService = {
   create,
   getAllByUserId,
@@ -181,4 +194,5 @@ export const bookService = {
   getBookById,
   updateBook,
   deleteBook,
+  deleteBooksByUserId
 };

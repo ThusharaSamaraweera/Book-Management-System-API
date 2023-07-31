@@ -16,7 +16,6 @@ const validateCreateBook = async (req: Request, res: Response, next: NextFunctio
   const logger = new Logger(BOOK_SERVICE);
 
   try {
-    if (!req.params.userId || req.params.userId === ":userId") throw new BadRequestError("User id is required", "");
 
     // Validate request body
     const schema = Joi.object({

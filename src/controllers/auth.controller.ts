@@ -23,6 +23,7 @@ const login = async (req: Request, res: Response, next: NextFunction) => {
   try {
     logger.info({ message: `Called login controller with ${req.body.email}` });
     const {user, token} = await authService.login(logger, req.body);
+  
     return res.json(apiResponse._200({ user, token}));
   } catch (error) {
     logger.error({ message: `Error in login controller ${error}` });

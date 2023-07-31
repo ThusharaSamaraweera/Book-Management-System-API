@@ -43,7 +43,7 @@ const filterBooks = async (req: Request, res: Response, next: NextFunction) => {
   const page = req.query["page"] as string;
   const limit = req.query["limit"] as string;
 
-  logger.info({ message: `Called filterBooks controller with ${title}, ${author} and ${genre}` });
+  logger.info({ message: `Called filterBooks controller with title-${title}, author-${author} and gerne-${genre}` });
   try {
     const books = await bookService.filterBooks(logger, title, author, genre, page, limit);
     res.json(apiResponse._200({ books }));

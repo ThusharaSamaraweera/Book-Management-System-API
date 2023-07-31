@@ -2,3 +2,4 @@ export const APP_INITIALIZER = "APP_INITIALIZER";
 export const AUTH_SERVICE = "AUTH_SERVICE";
 export const MONGODB_SERVICE = "MONGODB_SERVICE";
 export const BOOK_SERVICE = "BOOK_SERVICE";
+export const USER_SERVICE = "USER_SERVICE";
