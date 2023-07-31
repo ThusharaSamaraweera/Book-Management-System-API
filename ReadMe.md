@@ -12,13 +12,13 @@
 
 4. Create a file called `.env` in the root directory of the repository. This file will contain the environment variables for connecting to MongoDB and for other secret values.
 
-    `DB_USERNAME=your_db_username
+    ```DB_USERNAME=your_db_username
     DB_PASSWORD=your_db_password
     DB_HOST_NAME=your_db_hostname
     MONGO_DB_NAME=your_mongo_db_name
     JWT_SECRET=your_jwt_secret
     POSTMAN_API_KEY=your_postman_api_key
-    `
+    ```
 
 *  The `DB_USERNAME`, `DB_PASSWORD`, `DB_HOST_NAME`, and `MONGO_DB_NAME` environment variables should be replaced with the actual credentials for your MongoDB database.
 
